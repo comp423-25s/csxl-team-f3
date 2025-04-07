@@ -5,12 +5,14 @@ import { GateComponent } from './gate/gate.component';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { SignageComponent } from './signage/signage.component';
+import { StudyBuddyPageComponent } from './study-buddy/study-buddy-page/study-buddy-page.component';
 
 const routes: Routes = [
   HomeComponent.Route,
   AboutComponent.Route,
   GateComponent.Route,
-  { path: 'signage',
+  {
+    path: 'signage',
     title: 'XL Signage',
     loadChildren: () =>
       import('./signage/signage.module').then((m) => m.SignageModule)
@@ -53,12 +55,7 @@ const routes: Routes = [
     loadChildren: () =>
       import('./event/event.module').then((m) => m.EventModule)
   },
-  {
-    path: '',
-    title: 'My Courses',
-    loadChildren: () =>
-      import('./my-courses/my-courses.module').then((m) => m.MyCoursesModule)
-  },
+  // Only one default route is allowed:
   {
     path: '',
     title: 'My Courses',
@@ -89,6 +86,12 @@ const routes: Routes = [
       import('./applications/applications.module').then(
         (m) => m.ApplicationsModule
       )
+  },
+  {
+    path: 'study-buddy',
+    title: 'Study Buddy',
+    loadChildren: () =>
+      import('./study-buddy/study-buddy.module').then((m) => m.StudyBuddyModule)
   }
 ];
 
