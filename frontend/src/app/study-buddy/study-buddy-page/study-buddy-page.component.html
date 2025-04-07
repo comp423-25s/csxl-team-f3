@@ -1,0 +1,13 @@
+<div class="chat-container">
+    <div class="chat-messages">
+      <!-- Loop through messages -->
+      <div *ngFor="let msg of chatMessages" [ngClass]="{'user-message': msg.sender === 'user', 'bot-message': msg.sender === 'bot'}">
+        {{ msg.message }}
+      </div>
+    </div>
+    <div class="chat-actions">
+      <button mat-raised-button color="primary" (click)="generatePracticeProblems()">Generate Practice Problems</button>
+      <button mat-raised-button color="accent" (click)="generateStudyGuide()">Generate Study Guide</button>
+    </div>
+  </div>
+  
