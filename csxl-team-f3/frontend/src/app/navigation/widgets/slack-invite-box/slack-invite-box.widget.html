@@ -1,0 +1,38 @@
+<h2 mat-dialog-title>Join the CS Experience Labs' Slack Community</h2>
+<mat-dialog-content>
+  <p>
+    Join the CSXL Slack to get updates about the XL, learn about new
+    opportunities for CS students, and connect with fellow CS majors!
+  </p>
+  <mat-divider />
+  <mat-card-subtitle> Slack Profile </mat-card-subtitle>
+  <p>
+    I will use my <em>real first and last names</em> in my XL Slack Profile. I
+    will also set my <em>profile picture</em> to <em>include my face</em>, and
+    <em>no one else's face</em>, upon joining.
+  </p>
+  <mat-slide-toggle [(ngModel)]="realName"> I agree </mat-slide-toggle>
+  <mat-divider />
+  <mat-card-subtitle> Community Standards </mat-card-subtitle>
+  <p>
+    I will abide by the rules and standards detailed in the
+    <em>CSXL Community Standards Agreement</em>. I understand my
+    <em>failure to comply to these community standards</em> may result in
+    <em>being removed from the XL Slack community</em> and
+    <em>unable to make use of CS XL facilities</em> in Sitterson Hall and the
+    Fred Brooks Building.
+  </p>
+  <mat-slide-toggle [(ngModel)]="communityStandards">
+    I agree
+  </mat-slide-toggle>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-stroked-button color="secondary" (click)="close()">Cancel</button>
+  <button
+    mat-flat-button
+    mat-dialog-close
+    (click)="openSlackInvite()"
+    [disabled]="!acceptedAll">
+    Join the XL Slack
+  </button>
+</mat-dialog-actions>

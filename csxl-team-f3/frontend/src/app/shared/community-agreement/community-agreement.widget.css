@@ -1,0 +1,8 @@
+.mat-divider {
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.mat-mdc-dialog-content {
+  overflow-y: auto;
+}

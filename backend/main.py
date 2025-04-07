@@ -40,6 +40,8 @@ from .services.exceptions import (
     CourseDataScrapingException,
 )
 
+from backend.api.study_buddy import router as study_buddy_router
+
 __authors__ = ["Kris Jordan"]
 __copyright__ = "Copyright 2023"
 __license__ = "MIT"
@@ -115,6 +117,8 @@ app.mount("/", static_files.StaticFileMiddleware(directory=Path("./static")))
 
 # Register WebSocket middleware
 app.mount("/", websocket.WebSocketMiddleware)
+
+app.include_router(study_buddy_router)
 
 
 # Add application-wide exception handling middleware for commonly encountered API Exceptions

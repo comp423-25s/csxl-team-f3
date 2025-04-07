@@ -1,0 +1,125 @@
+<mat-pane>
+  <mat-card-content>
+    <div class="row">
+      <div class="content">
+        <mat-card-title>Users and Roles</mat-card-title>
+        <div class="font-variant facts">
+          <p>
+            <span class="text-badge secondary-background">{{
+              (facts$ | async)?.users
+            }}</span
+            >&nbsp;users
+          </p>
+          <p>
+            <span class="text-badge secondary-background">{{
+              (facts$ | async)?.roles
+            }}</span
+            >&nbsp;roles
+          </p>
+        </div>
+      </div>
+      <button
+        class="manage-button"
+        mat-flat-button
+        color="primary"
+        routerLink="/admin/accounts/users">
+        Manage
+      </button>
+    </div>
+  </mat-card-content>
+</mat-pane>
+
+<mat-pane>
+  <mat-card-content>
+    <div class="row">
+      <div class="content">
+        <mat-card-title>Academics</mat-card-title>
+        <div class="font-variant facts">
+          <p>
+            <span class="text-badge secondary-background">{{
+              (facts$ | async)?.terms
+            }}</span
+            >&nbsp;terms
+          </p>
+          <p>
+            <span class="text-badge secondary-background">{{
+              (facts$ | async)?.courses
+            }}</span
+            >&nbsp;courses
+          </p>
+          <p>
+            <span class="text-badge secondary-background">{{
+              (facts$ | async)?.sections
+            }}</span
+            >&nbsp;sections
+          </p>
+          <p>
+            <span class="text-badge secondary-background">{{
+              (facts$ | async)?.rooms
+            }}</span
+            >&nbsp;rooms
+          </p>
+        </div>
+      </div>
+
+      <button
+        class="manage-button"
+        mat-flat-button
+        color="primary"
+        routerLink="/academics/admin/section">
+        Manage
+      </button>
+    </div>
+  </mat-card-content>
+</mat-pane>
+
+<mat-pane>
+  <mat-card-content>
+    <div class="row">
+      <div class="content">
+        <mat-card-title>Organizations</mat-card-title>
+        <div class="font-variant facts">
+          <p>
+            <span class="text-badge secondary-background">{{
+              (facts$ | async)?.organizations
+            }}</span
+            >&nbsp;organizations
+          </p>
+        </div>
+      </div>
+
+      <button
+        class="manage-button"
+        mat-flat-button
+        color="primary"
+        routerLink="/organizations/admin">
+        Manage
+      </button>
+    </div>
+  </mat-card-content>
+</mat-pane>
+
+<mat-pane>
+  <mat-card-content>
+    <div class="row">
+      <div class="content">
+        <mat-card-title>Articles</mat-card-title>
+        <div class="font-variant facts">
+          <p>
+            <span class="text-badge secondary-background">{{
+              (facts$ | async)?.articles
+            }}</span
+            >&nbsp;articles
+          </p>
+        </div>
+      </div>
+      <button
+        class="manage-button"
+        mat-flat-button
+        color="primary"
+        routerLink="/article/admin">
+        Manage
+      </button>
+    </div>
+  </mat-card-content>
+</mat-pane>

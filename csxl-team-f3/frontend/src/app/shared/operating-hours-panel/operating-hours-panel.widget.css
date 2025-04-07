@@ -1,0 +1,56 @@
+.mat-mdc-card-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 16px;
+}
+
+.hours-title {
+  font-size: 16px;
+  font-weight: 500;
+  margin: 0;
+  letter-spacing: 0.25px;
+  line-height: 40px;
+  text-decoration-color: rgba(0, 0, 0, 0.87);
+  text-decoration-line: none;
+  text-decoration-style: solid;
+  text-decoration-thickness: auto;
+  -webkit-font-smoothing: antialiased;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 20px;
+  margin-right: 8px;
+  height: 40px;
+  width: fit-content;
+  align-items: center;
+  font-size: large;
+  font-weight: 600 !important;
+}
+
+.mat-mdc-card {
+  max-width: 640px;
+  margin: 0;
+}
+
+.header-row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 8px;
+  width: 100%;
+}
+
+@media only screen and (max-width: 900px) {
+
+  .mat-mdc-card-title {
+    display: flex;
+    flex-direction: column;
+  }
+
+  button {
+    margin-left: 0;
+  }
+  
+}
