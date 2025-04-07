@@ -75,6 +75,10 @@
               <mat-icon matListItemIcon>school</mat-icon>
               <div matListItemTitle>Academics</div>
             </mat-list-item> -->
+            <mat-list-item routerLink="/study-buddy" [activated]="router.isActive('/study-buddy', true)">
+              <mat-icon matListItemIcon>chat</mat-icon>
+              <div matListItemTitle>Study Buddy</div>
+            </mat-list-item>
           }
           <mat-divider></mat-divider>
           <!-- Community -->
