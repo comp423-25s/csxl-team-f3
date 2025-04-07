@@ -1,0 +1,43 @@
+<mat-pane appearance="outlined">
+  <!-- Coworking Card Header -->
+  <mat-card-header class="dropin-header">
+    <!--  class="user-name" -->
+    <mat-card-title>Drop-in to The XL (SN156)</mat-card-title>
+  </mat-card-header>
+
+  <!-- Coworking Information -->
+  <mat-card-content>
+    <p>
+      The following seats are available for drop-ins. Reserve here and check-in
+      within 10 minutes.
+    </p>
+    <!-- Coworking Dropdowns -->
+    <!-- TODO: Refactor these list items to widgets? -->
+    <mat-action-list>
+      @for (category of categories; track category) { @if
+      (category.reservable_now) {
+      <mat-list-item (click)="reserve(category)">
+        <span matListItemTitle>{{ category.title }}</span>
+        <span matListItemIcon class="primary-background">{{
+          category.seats_available_now.length
+        }}</span>
+        <p matListItemLine>{{ category.availabilityString() }}</p>
+        <h3 matListItemMeta>&rsaquo;</h3>
+      </mat-list-item>
+      } @else { @if(category.reservable_soon) {
+      <mat-list-item (click)="reserve(category)">
+        <h3 matListItemTitle>{{ category.title }}</h3>
+        <div matListItemIcon class="upcoming secondary-background">1</div>
+        <p matListItemLine>{{ category.availabilityString() }}</p>
+        <h3 matListItemMeta>&rsaquo;</h3>
+      </mat-list-item>
+      } @else {
+      <mat-list-item>
+        <h3 matListItemTitle>{{ category.title }}</h3>
+        <div matListItemIcon class="unavailable tertiary-background">0</div>
+        <p matListItemLine class="tertiary-color">None available</p>
+      </mat-list-item>
+      } } }
+    </mat-action-list>
+  </mat-card-content>
+</mat-pane>

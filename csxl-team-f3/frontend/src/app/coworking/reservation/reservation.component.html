@@ -1,0 +1,8 @@
+<div class="card-container">
+  @if(reservationService.reservation()) {
+  <coworking-reservation-card
+    [reservation]="
+      reservationService.reservation()!
+    "></coworking-reservation-card>
+  }
+</div>

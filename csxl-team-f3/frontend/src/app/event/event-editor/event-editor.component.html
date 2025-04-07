@@ -1,0 +1,145 @@
+<!-- Show form if user is an admin or organizer of the event. -->
+<form [formGroup]="eventForm" (ngSubmit)="onSubmit()">
+  <mat-pane appearance="outlined">
+    <!-- Header -->
+    <mat-card-header>
+      <mat-card-title>
+        {{ this.isNew() ? 'Create' : 'Update' }} Event
+      </mat-card-title>
+    </mat-card-header>
+
+    <!-- Event Name -->
+    <mat-card-content>
+      <mat-form-field appearance="outline" color="accent">
+        <mat-label>Event Name</mat-label>
+        <input
+          matInput
+          placeholder="New Event"
+          formControlName="name"
+          name="name"
+          required />
+      </mat-form-field>
+
+      <!-- Start Time -->
+      <mat-form-field appearance="outline" color="accent">
+        <mat-label>Start Time</mat-label>
+        <input
+          matInput
+          type="datetime-local"
+          placeholder="Start Time"
+          formControlName="start"
+          name="start"
+          required />
+      </mat-form-field>
+
+      <!-- End Time -->
+      <mat-form-field appearance="outline" color="accent">
+        <mat-label>End Time</mat-label>
+        <input
+          matInput
+          type="datetime-local"
+          placeholder="End Time"
+          formControlName="end"
+          name="end"
+          required />
+      </mat-form-field>
+      <!-- Image URL -->
+      <mat-form-field appearance="outline" color="accent">
+        <mat-label>Image URL</mat-label>
+        <input
+          matInput
+          placeholder="Supply a rectangular banner image here."
+          formControlName="image_url"
+          name="image_url" />
+      </mat-form-field>
+
+      <!-- Location -->
+      <mat-form-field appearance="outline" color="accent">
+        <mat-label>Location</mat-label>
+        <input
+          matInput
+          placeholder="The Pit"
+          formControlName="location"
+          name="location"
+          required />
+      </mat-form-field>
+
+      <!-- Description -->
+      <mat-form-field appearance="outline" color="accent">
+        <mat-label>Description</mat-label>
+        <textarea
+          matInput
+          placeholder="Event description here."
+          formControlName="description"
+          name="description"></textarea>
+      </mat-form-field>
+
+      <!-- Room Reservable Field -->
+      <mat-slide-toggle formControlName="internal_registration">
+        Use the CSXL's event registration system.
+      </mat-slide-toggle>
+
+      @if(eventForm.get('internal_registration')!.value) {
+      <!-- Room Reservable Field -->
+      <mat-slide-toggle formControlName="has_limit">
+        Add registration limit?
+      </mat-slide-toggle>
+
+      <!-- Registration Limit -->
+      @if(eventForm.get('has_limit')!.value) {
+      <mat-form-field appearance="outline" color="accent">
+        <mat-label>Registration Limit</mat-label>
+        <input
+          type="number"
+          matInput
+          placeholder="Registration limit here."
+          formControlName="registration_limit"
+          name="registration_limit" />
+      </mat-form-field>
+      } } @else {
+      <!-- Registration URL -->
+      <mat-form-field appearance="outline" color="accent">
+        <mat-label>Custom Registration Link</mat-label>
+        <input
+          matInput
+          placeholder="Custom Registration Link."
+          formControlName="override_registration_url"
+          name="override_registration_url" />
+      </mat-form-field>
+
+      }
+
+      <!-- User Selection / Organizers Form Control -->
+      <user-lookup label="Organizers" [users]="organizers"></user-lookup>
+    </mat-card-content>
+
+    <!-- Save Button -->
+    <mat-card-actions>
+      @if (!isNew()) {
+      <button
+        mat-flat-button
+        class="tertiary-button"
+        type="button"
+        (click)="onDelete()">
+        Delete
+      </button>
+      }
+      <div class="right-buttons">
+        <button
+          mat-stroked-button
+          color="secondary"
+          type="button"
+          (click)="onReset()">
+          Reset
+        </button>
+        <button
+          mat-flat-button
+          color="primary"
+          type="submit"
+          [disabled]="eventForm.invalid">
+          Save
+        </button>
+      </div>
+    </mat-card-actions>
+  </mat-pane>
+</form>

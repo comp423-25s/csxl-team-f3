@@ -1,5 +1,7 @@
 """Package for all models in the application."""
 
+from .study_buddy import PracticeProblem, StudySession, StudentProgress, StudyGuide
+
 from .application import Application
 from .pagination import Paginated, PaginationParams, EventPaginationParams
 from .permission import Permission

@@ -1,0 +1,96 @@
+<form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+  <mat-pane appearance="outlined">
+    <mat-card-header *ngIf="profile.id; else registration">
+      <mat-card-title>Update your Profile</mat-card-title>
+    </mat-card-header>
+    <ng-template #registration>
+      <mat-card-header>
+        <mat-card-title
+          >Welcome to CSXL! Please verify and complete your profile
+          below.</mat-card-title
+        >
+        <mat-card-subtitle>
+          Once your profile is setup you will be able to take advantage of CSXL
+          initiatives such as enrolling in workshops, reserving a desk during
+          coworking hours, and more!
+        </mat-card-subtitle>
+      </mat-card-header>
+    </ng-template>
+    <mat-card-content>
+      <mat-form-field appearance="outline">
+        <mat-label>First Name</mat-label>
+        <input
+          matInput
+          placeholder="First Name"
+          formControlName="first_name"
+          name="first_name"
+          required />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Last Name</mat-label>
+        <input
+          matInput
+          placeholder="Last Name"
+          formControlName="last_name"
+          name="last_name"
+          required />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>UNC Email</mat-label>
+        <input
+          matInput
+          type="email"
+          placeholder="email@unc.edu"
+          formControlName="email"
+          name="email"
+          required />
+        <mat-error *ngIf="profileForm.value.email"
+          >Must provide a valid UNC email address.</mat-error
+        >
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>LinkedIn Profile Link</mat-label>
+        <input
+          matInput
+          placeholder="Paste your LinkedIn profile URL here."
+          formControlName="linkedin"
+          name="linkedin" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Personal Website Link</mat-label>
+        <input
+          matInput
+          placeholder="Paste the url of your website here."
+          formControlName="website"
+          name="website" />
+      </mat-form-field>
+      <mat-form-field appearance="outline">
+        <mat-label>Pronouns</mat-label>
+        <input
+          matInput
+          placeholder="she / her / hers"
+          formControlName="pronouns"
+          name="pronouns"
+          required />
+      </mat-form-field>
+      <mat-form-field appearance="outline" color="accent">
+        <mat-label>Bio (Markdown Supported)</mat-label>
+        <textarea
+          matInput
+          placeholder="Write your bio here (markdown supported)."
+          formControlName="bio"
+          name="bio"></textarea>
+      </mat-form-field>
+    </mat-card-content>
+    <mat-card-actions>
+      <button mat-stroked-button routerLink="/profile">Cancel</button>
+      <button
+        mat-flat-button
+        color="primary"
+        type="submit"
+        [disabled]="profileForm.invalid">
+        Save
+      </button>
+    </mat-card-actions>
+  </mat-pane>
+</form>

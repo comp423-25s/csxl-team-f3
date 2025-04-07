@@ -1,0 +1,76 @@
+<mat-pane>
+  <mat-card-header>
+    @if (profile.github_avatar) {
+    <img mat-card-avatar class="user-avatar" [src]="profile.github_avatar" />
+    } @else if (profile.first_name && profile.last_name) {
+    <p mat-card-avatar class="user-avatar secondary-background">
+      {{ profile.first_name.charAt(0) }}{{ profile.last_name.charAt(0) }}
+    </p>
+    }
+
+    <div class="header-row">
+      <mat-card-title>
+        {{ profile.first_name }} {{ profile.last_name }}
+      </mat-card-title>
+      <mat-chip-set class="no-hover-chipset">
+        <mat-chip disableRipple>
+          {{ profile.pronouns }}
+        </mat-chip>
+      </mat-chip-set>
+    </div>
+  </mat-card-header>
+  <mat-card-content>
+    <div class="links-row">
+      <div class="row">
+        <mat-icon class="secondary-icon">mail</mat-icon>
+        <p>{{ profile.email }}</p>
+      </div>
+      @if (profile.website) {
+      <div class="row">
+        <mat-icon class="link-icons secondary-icon">link</mat-icon>
+        <p>
+          <a class="font-secondary" [href]="profile.website" target="_blank"
+            >Personal Website</a
+          >
+        </p>
+      </div>
+      } @if (profile.linkedin) {
+      <div class="row">
+        <mat-icon
+          class="link-icons secondary-icon"
+          id="linkedin-icon"
+          svgIcon="linkedin" />
+        <p>
+          <a class="font-secondary" [href]="profile.linkedin" target="_blank"
+            >LinkedIn</a
+          >
+        </p>
+      </div>
+
+      }
+      <div class="row">
+        @if (profile.github) {
+        <mat-icon
+          class="link-icons secondary-icon"
+          id="github-icon"
+          svgIcon="github" />
+        <p>
+          <a
+            class="font-secondary"
+            id="github-link"
+            href="https://github.com/{{ profile.github }}">
+            &#64;{{ profile.github }}
+          </a>
+        </p>
+        }
+      </div>
+    </div>
+    <mat-divider id="bio-divider" />
+    <mat-card-subtitle>Profile Bio</mat-card-subtitle>
+    @if (profile.bio) {
+    <p markdown>{{ profile.bio! }}</p>
+    } @else {
+    <p>User does not have a bio.</p>
+    }
+  </mat-card-content>
+</mat-pane>

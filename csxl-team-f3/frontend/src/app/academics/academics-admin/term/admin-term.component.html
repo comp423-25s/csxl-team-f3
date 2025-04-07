@@ -1,0 +1,37 @@
+<!-- HTML Structure of Admin Terms List -->
+<mat-pane>
+  <mat-card-content>
+    @if(terms()) {
+    <div class="content">
+      <div class="table-responsive">
+        <table mat-table [dataSource]="terms()">
+          <ng-container matColumnDef="name">
+            <th mat-header-cell *matHeaderCellDef>
+              <div class="header">
+                Terms
+                <button mat-stroked-button (click)="createTerm()">Create</button>
+              </div>
+            </th>
+            <td mat-cell *matCellDef="let element">
+              <div class="row" (click)="updateTerm(element)">
+                <p>
+                  {{ element.name }}
+                </p>
+                <div clas="modify-buttons">
+                  <button
+                    mat-stroked-button
+                    (click)="deleteTerm(element, $event)">
+                    Delete
+                  </button>
+                </div>
+              </div>
+            </td>
+          </ng-container>
+          <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+        </table>
+      </div>
+    </div>
+    }
+  </mat-card-content>
+</mat-pane>
