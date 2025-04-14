@@ -1,0 +1,15 @@
+{
+    "include": [
+        "backend"
+    ],
+    "exclude": [
+        "**/node_modules",
+        "**/__pycache__",
+        "**/.pytest_cache"
+    ],
+    "pythonVersion": "3.9",
+    "pythonPlatform": "Linux",
+    "reportMissingImports": true,
+    "reportMissingTypeStubs": false,
+    "typeCheckingMode": "basic"
+} 
