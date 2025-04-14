@@ -7,6 +7,8 @@ from fastapi.middleware.gzip import GZipMiddleware
 
 from backend.services.coworking.reservation import ReservationException
 
+from .api.events import events
+
 from .api import (
     health,
     organizations,
