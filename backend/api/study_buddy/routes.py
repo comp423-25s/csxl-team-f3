@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 from typing import List, Optional
 from uuid import UUID, uuid4
 from datetime import datetime, timezone
+
 from ...models.study_buddy.study_buddy_models import (
     PracticeProblem,
     StudySession,
@@ -35,16 +36,17 @@ MOCK_COURSES = {
 
 # Course descriptions for OpenAI prompts
 COURSE_DESCRIPTIONS = {
-    "COMP401": "Introduction to Computer Science - Fundamental concepts of computer science and programming",
-    "COMP402": "Data Structures and Algorithms - Advanced data structures and algorithm analysis",
+    "COMP401": (
+        "Introduction to Computer Science - Fundamental concepts of computer science and programming"
+    ),
+    "COMP402": (
+        "Data Structures and Algorithms - Advanced data structures and algorithm analysis"
+    ),
 }
 
 # Temporary storage for study sessions and student progress
 STUDY_SESSIONS = {}
 STUDENT_PROGRESS = []
-
-# Initialize the study buddy service
-study_buddy_service = StudyBuddyService()
 
 
 @router.get("/courses")
@@ -57,7 +59,8 @@ async def get_courses() -> List[Course]:
 
 @router.get("/courses/{course_id}")
 async def get_course(
-    course_id: str, current_user: User = Depends(registered_user)
+    course_id: str,
+    current_user: User = Depends(registered_user),
 ) -> Course:
     """
     Get a specific course by ID
@@ -70,7 +73,8 @@ async def get_course(
 
 @router.get("/courses/{course_id}/topics")
 async def get_course_topics(
-    course_id: str, current_user: User = Depends(registered_user)
+    course_id: str,
+    current_user: User = Depends(registered_user),
 ) -> List[str]:
     """
     Get all available topics for a course
@@ -87,7 +91,7 @@ async def get_practice_problems(
     topic: Optional[str] = None,
     difficulty: Optional[str] = None,
     question_type: Optional[str] = None,
-    current_user: User = Depends(registered_user),
+    study_buddy_service: StudyBuddyService = Depends(),  # <--- Inject service
 ) -> List[PracticeProblem]:
     """
     Get practice problems for a specific course, with optional filters
@@ -109,17 +113,18 @@ async def get_practice_problems(
 
 @router.post("/study-guides")
 async def generate_study_guide(
-    course_id: str, topics: List[str], current_user: User = Depends(registered_user)
+    course_id: str,
+    topics: List[str],
+    study_buddy_service: StudyBuddyService = Depends(),  # <--- Inject service
 ) -> StudyGuide:
     """
     Generate a personalized study guide based on student's weak areas
     """
     try:
-        current_user_id = UUID(int=current_user.id) if current_user.id else None
         student_progress = [
             p
             for p in STUDENT_PROGRESS
-            if p.course_id == UUID(course_id) and p.user_id == current_user_id
+            if p.course_id == UUID(course_id)
         ]
         course_description = COURSE_DESCRIPTIONS.get(
             course_id, "Computer Science Course"
@@ -136,7 +141,9 @@ async def generate_study_guide(
 
 @router.post("/study-sessions")
 async def start_study_session(
-    course_id: str, topics: List[str], current_user: User = Depends(registered_user)
+    course_id: str,
+    topics: List[str],
+    current_user: User = Depends(registered_user),
 ) -> StudySession:
     """
     Start a new study session
@@ -182,7 +189,8 @@ async def end_study_session(
 
 @router.get("/progress/{course_id}")
 async def get_student_progress(
-    course_id: str, current_user: User = Depends(registered_user)
+    course_id: str,
+    current_user: User = Depends(registered_user),
 ) -> List[StudentProgress]:
     """
     Get student's progress for all topics in a course
