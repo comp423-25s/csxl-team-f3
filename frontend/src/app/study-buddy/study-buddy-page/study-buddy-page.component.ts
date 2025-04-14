@@ -1,11 +1,6 @@
 import { Component, OnInit } from '@angular/core';
-import { StudyBuddyService } from 'src/app/study-buddy.service'; // adjust the path based on your structure
-
-// Define an interface for chat messages
-interface ChatMessage {
-  sender: 'user' | 'bot';
-  message: string;
-}
+import { StudyBuddyService } from 'src/app/study-buddy.service';
+import { Course } from 'src/app/models/course.model';
 
 @Component({
   selector: 'app-study-buddy-page',
@@ -13,54 +8,66 @@ interface ChatMessage {
   styleUrls: ['./study-buddy-page.component.css']
 })
 export class StudyBuddyPageComponent implements OnInit {
-  chatMessages: ChatMessage[] = [];
+  courses: Course[] = [];
+  selectedCourse: Course | null = null;
+  chatMessages: { sender: 'user' | 'bot'; message: string }[] = [];
 
   constructor(private studyBuddyService: StudyBuddyService) {}
 
   ngOnInit(): void {
-    // Optionally add a welcome message
-    this.chatMessages.push({
-      sender: 'bot',
-      message: 'Welcome to Study Buddy! How can I help you today?'
+    this.loadCourses();
+  }
+
+  loadCourses(): void {
+    this.studyBuddyService.getCourses().subscribe({
+      next: (data) => {
+        this.courses = data;
+      },
+      error: (err) => console.error('Error loading courses', err)
     });
   }
 
-  generatePracticeProblems(): void {
-    const courseId = 'some-course-id'; // Replace with an actual course ID or get it from context
-    this.studyBuddyService.getPracticeProblems(courseId).subscribe({
+  selectCourse(course: Course): void {
+    this.selectedCourse = course;
+    // Optionally clear prior messages:
+    this.chatMessages = [
+      { sender: 'bot', message: `Selected course: ${course.name}` }
+    ];
+  }
+
+  generatePracticeProblems(topic: string): void {
+    if (!this.selectedCourse) return;
+    const courseId = this.selectedCourse.id; // or some unique identifier you use (e.g., "COMP401")
+    this.studyBuddyService.getPracticeProblems(courseId, topic).subscribe({
       next: (problems) => {
-        // Format the dummy problems into a single message (you could format them better)
+        // Assume problems is an array and extract the question_text
         const message = problems.map((p: any) => p.question_text).join('\n');
         this.chatMessages.push({ sender: 'bot', message });
       },
       error: (err) => {
-        console.error('Error fetching practice problems', err);
+        console.error('Error generating practice problems', err);
         this.chatMessages.push({
           sender: 'bot',
-          message: 'There was an error fetching practice problems.'
+          message: 'Error generating practice problem.'
         });
       }
     });
   }
 
-  generateStudyGuide(): void {
-    const courseId = 'some-course-id'; // Replace as needed
-    // For demonstration, let's assume you have a method in your service called generateStudyGuide.
-    // If not, you could simulate a call to your backend.
-    this.studyBuddyService
-      .generateStudyGuide(courseId, ['topic1', 'topic2'])
-      .subscribe({
-        next: (guide) => {
-          // Assume the guide has a "content" property
-          this.chatMessages.push({ sender: 'bot', message: guide.content });
-        },
-        error: (err) => {
-          console.error('Error generating study guide', err);
-          this.chatMessages.push({
-            sender: 'bot',
-            message: 'There was an error generating the study guide.'
-          });
-        }
-      });
+  generateStudyGuide(topic: string): void {
+    if (!this.selectedCourse) return;
+    const courseId = this.selectedCourse.id;
+    this.studyBuddyService.generateStudyGuide(courseId, [topic]).subscribe({
+      next: (guide) => {
+        this.chatMessages.push({ sender: 'bot', message: guide.content });
+      },
+      error: (err) => {
+        console.error('Error generating study guide', err);
+        this.chatMessages.push({
+          sender: 'bot',
+          message: 'Error generating study guide.'
+        });
+      }
+    });
   }
 }

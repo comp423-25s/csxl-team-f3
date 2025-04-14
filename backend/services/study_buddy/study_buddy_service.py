@@ -8,16 +8,39 @@ from ...models.study_buddy.study_buddy_models import (
     StudyGuide,
     StudentProgress,
 )
+from pydantic import BaseModel, RootModel
+from fastapi import Depends
+
+from ..openai import OpenAIService
+ 
+ 
+ # 1) Pydantic 2.x Root Models:
+ 
+ 
+class PracticeProblemResponse(BaseModel):
+     """Represents a single problem from the AI response."""
+ 
+     question_text: str
+     answer: str
+     explanation: str
+ 
+ 
+class PracticeProblemListResponse(BaseModel):
+     """Represents a response containing a list of practice problems."""
+ 
+     problems: List[PracticeProblemResponse]
+ 
+ 
+class StudyGuideResponse(BaseModel):
+     """Represents a study guide from the AI (could be raw markdown or structured JSON)."""
+ 
+     content: str
 
 
 class StudyBuddyService:
-    def __init__(self):
-        # Get API key from environment variable
-        api_key = os.getenv("UNC_OPENAI_API_KEY")
-        if not api_key:
-            raise ValueError("OPENAI_API_KEY environment variable is not set")
-        self.client = openai.OpenAI(api_key=api_key)
-
+    def __init__(self, openai: OpenAIService = Depends()):
+        self.openai = openai
+ 
     async def generate_practice_problems(
         self,
         course_id: str,
@@ -30,7 +53,7 @@ class StudyBuddyService:
         """
         Generate practice problems using OpenAI
         """
-        prompt = f"""
+        user_prompt = f"""
         Create {num_problems} practice problems for the following course:
         Course: {course_id} - {course_description}
         
@@ -45,61 +68,53 @@ class StudyBuddyService:
         4. Be appropriate for a computer science student
         5. Include relevant code examples if applicable
         
-        Format the response as a JSON array with the following structure for each problem:
+
+        Return a JSON object with this format:
+
         {{
-            "question_text": "The question text",
-            "answer": "The correct answer",
-            "explanation": "Detailed explanation of why this is the correct answer"
-        }}
-        """
-
+             "problems": [
+                 {{
+                 "question_text": "The question text",
+                 "answer": "The correct answer",
+                 "explanation": "Why it's correct"
+                 }}
+             ]
+             }}
+ 
+             return problems
+         """
+ 
+        system_prompt = (
+             "You are an expert computer science educator. "
+             "Generate high-quality practice problems that test conceptual understanding "
+             "and practical skills."
+         )
+ 
         try:
-            response = self.client.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are an expert computer science educator. Generate high-quality practice problems that test conceptual understanding and practical skills.",
-                    },
-                    {"role": "user", "content": prompt},
-                ],
-                response_format={"type": "json_object"},
-                temperature=0.7,
-            )
-
-            content = response.choices[0].message.content
-            if not content:
-                raise ValueError("Failed to generate practice problems")
-
-            try:
-                problems_data = json.loads(content)
-                if not isinstance(problems_data, list):
-                    problems_data = [problems_data]
-            except json.JSONDecodeError:
-                raise ValueError("Failed to parse practice problems response")
-
-            problems = []
-            for problem_data in problems_data:
-                if not isinstance(problem_data, dict):
-                    continue
-
-                problems.append(
-                    PracticeProblem(
-                        course_id=UUID(course_id),
-                        topic=topic or "General",
-                        difficulty=difficulty or "medium",
-                        question_type=question_type or "multiple_choice",
-                        question_text=problem_data.get("question_text", ""),
-                        answer=problem_data.get("answer", ""),
-                        explanation=problem_data.get("explanation", ""),
-                    )
-                )
-
-            return problems
-
+             response: PracticeProblemListResponse = self.openai.prompt(
+                 system_prompt=system_prompt,
+                 user_prompt=user_prompt,
+                 response_model=PracticeProblemListResponse,
+             )
         except Exception as e:
-            raise Exception(f"Failed to generate practice problems: {str(e)}")
-
+             raise Exception(f"Failed to generate practice problems: {str(e)}")
+ 
+         # Convert AI response to your domain model
+        problems = []
+        for problem_data in response.problems:
+             problems.append(
+                 PracticeProblem(
+                     course_id=UUID(course_id),
+                     topic=topic or "General",
+                     difficulty=difficulty or "medium",
+                     question_type=question_type or "multiple_choice",
+                     question_text=problem_data.question_text,
+                     answer=problem_data.answer,
+                     explanation=problem_data.explanation,
+                 )
+             )
+        return problems
+    
     async def generate_study_guide(
         self,
         course_id: str,
@@ -108,63 +123,63 @@ class StudyBuddyService:
         student_progress: List[StudentProgress],
     ) -> StudyGuide:
         """
-        Generate a personalized study guide using OpenAI
+        Generate a personalized study guide using OpenAIService.
+        This method constructs a prompt using the course info and topics,
+        calls the OpenAI API to generate a study guide in JSON format, and
+        returns a StudyGuide instance.
         """
-        # Identify weak areas based on student progress
+        # Identify weak topics from student progress (where proficiency is low)
         weak_topics = [
             progress.topic
             for progress in student_progress
             if progress.proficiency_score < 0.7
         ]
-
-        # Create prompt for OpenAI
-        prompt = f"""
+        
+        # Construct a prompt that requests a study guide
+        user_prompt = f"""
         Create a comprehensive study guide for the following computer science course:
         Course: {course_id} - {course_description}
         
-        Topics to cover:
-        {', '.join(topics)}
+        Topics to cover: {', '.join(topics)}
         
-        Focus especially on these areas where the student needs improvement:
-        {', '.join(weak_topics) if weak_topics else 'None identified'}
+        Focus especially on these areas where the student needs improvement: {', '.join(weak_topics) if weak_topics else 'None'}
         
         The study guide should:
-        1. Explain key concepts clearly and concisely
-        2. Include relevant examples and code snippets
-        3. Provide step-by-step explanations for complex topics
-        4. Include common pitfalls and how to avoid them
-        5. Suggest additional resources for further study
-        6. Include practice exercises and solutions
-        7. Use markdown formatting for better readability
+        1. Explain key concepts clearly and concisely.
+        2. Include relevant examples and code snippets.
+        3. Provide step-by-step explanations for complex topics.
+        4. Highlight common pitfalls and suggest how to avoid them.
+        5. Use markdown formatting for clear readability.
         
-        Format the study guide in markdown with clear sections and subsections.
+        Return a JSON object with the following format:
+        {{
+        "content": "# Study Guide Title\\n ... (Markdown content) ..."
+        }}
         """
 
+        # Provide a system prompt to set the role for the AI
+        system_prompt = (
+            "You are an expert computer science tutor. Create a detailed and well-structured study guide to help students master complex topics."
+        )
+        
         try:
-            response = self.client.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You are an expert computer science tutor. Create detailed, well-structured study guides that help students master complex topics.",
-                    },
-                    {"role": "user", "content": prompt},
-                ],
-                temperature=0.7,
+            # Call the OpenAI service helper with our prompts, expecting a StudyGuideResponse
+            study_guide_resp: StudyGuideResponse = self.openai.prompt(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                response_model=StudyGuideResponse,
             )
-
-            content = response.choices[0].message.content
-            if not content:
-                raise ValueError("Failed to generate study guide")
-
-            return StudyGuide(
-                course_id=UUID(course_id),
-                topic=", ".join(topics),
-                content=content,
-            )
-
         except Exception as e:
             raise Exception(f"Failed to generate study guide: {str(e)}")
+        
+        # Build and return the StudyGuide object from the response.
+        return StudyGuide(
+            course_id=UUID(course_id),
+            topic=", ".join(topics),
+            content=study_guide_resp.content,
+        )
+
+
 
     def calculate_proficiency_score(
         self, problems_attempted: int, problems_correct: int

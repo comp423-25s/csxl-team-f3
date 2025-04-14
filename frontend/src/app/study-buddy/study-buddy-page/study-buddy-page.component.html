@@ -1,13 +1,49 @@
-<div class="chat-container">
-    <div class="chat-messages">
-      <!-- Loop through messages -->
-      <div *ngFor="let msg of chatMessages" [ngClass]="{'user-message': msg.sender === 'user', 'bot-message': msg.sender === 'bot'}">
-        {{ msg.message }}
+<div class="study-buddy-container">
+  <!-- Left Panel: Courses List -->
+  <div class="course-list">
+    <h3>Select a Course</h3>
+    <ul>
+      @for (course of courses; track course.id) {
+        <li (click)="selectCourse(course)">
+          {{ course.name }}
+        </li>
+      } @empty {
+        <li>No courses available</li>
+      }
+    </ul>
+  </div>
+
+  <!-- Right Panel: Course Details and Actions -->
+  @if (selectedCourse) {
+    <div class="course-detail">
+      <h2>{{ selectedCourse.name }}</h2>
+      <p>{{ selectedCourse.description }}</p>
+
+      <h3>Topics</h3>
+      @for (topic of selectedCourse.topics; track topic) {
+        <div class="topic-section">
+          <p>{{ topic }}</p>
+          <button mat-raised-button color="primary" (click)="generatePracticeProblems(selectedCourse.id)">
+            Generate Practice Problem
+          </button>
+          <button mat-raised-button color="accent" (click)="generateStudyGuide(selectedCourse.id)">
+            Generate Study Guide
+          </button>
+        </div>
+      } @empty {
+        <p>No topics available</p>
+      }
+
+      <h3>Output</h3>
+      <div class="chat-messages">
+        @for (msg of chatMessages; track msg.message) {
+          <div [ngClass]="{'user-message': msg.sender === 'user', 'bot-message': msg.sender === 'bot'}">
+            {{ msg.message }}
+          </div>
+        } @empty {
+          <p>No messages available</p>
+        }
       </div>
     </div>
-    <div class="chat-actions">
-      <button mat-raised-button color="primary" (click)="generatePracticeProblems()">Generate Practice Problems</button>
-      <button mat-raised-button color="accent" (click)="generateStudyGuide()">Generate Study Guide</button>
-    </div>
-  </div>
-  
+  }
+</div>
