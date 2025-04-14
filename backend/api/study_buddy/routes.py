@@ -43,10 +43,6 @@ COURSE_DESCRIPTIONS = {
 STUDY_SESSIONS = {}
 STUDENT_PROGRESS = []
 
-# Initialize the study buddy service
-study_buddy_service = StudyBuddyService()
-
-
 @router.get("/courses")
 async def get_courses() -> List[Course]:
     """
@@ -87,7 +83,7 @@ async def get_practice_problems(
     topic: Optional[str] = None,
     difficulty: Optional[str] = None,
     question_type: Optional[str] = None,
-    current_user: User = Depends(registered_user),
+    study_buddy_service: StudyBuddyService = Depends(),  # <--- Inject service
 ) -> List[PracticeProblem]:
     """
     Get practice problems for a specific course, with optional filters
@@ -107,19 +103,17 @@ async def get_practice_problems(
         raise HTTPException(status_code=500, detail=str(e))
 
 
+from fastapi import Body
+
 @router.post("/study-guides")
 async def generate_study_guide(
-    course_id: str, topics: List[str], current_user: User = Depends(registered_user)
+    course_id: str = Body(...),
+    topics: List[str] = Body(...),
+    study_buddy_service: StudyBuddyService = Depends()
 ) -> StudyGuide:
-    """
-    Generate a personalized study guide based on student's weak areas
-    """
     try:
-        current_user_id = UUID(int=current_user.id) if current_user.id else None
         student_progress = [
-            p
-            for p in STUDENT_PROGRESS
-            if p.course_id == UUID(course_id) and p.user_id == current_user_id
+            p for p in STUDENT_PROGRESS if p.course_id == UUID(course_id)
         ]
         course_description = COURSE_DESCRIPTIONS.get(
             course_id, "Computer Science Course"
@@ -132,6 +126,8 @@ async def generate_study_guide(
         )
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
 
 
 @router.post("/study-sessions")
