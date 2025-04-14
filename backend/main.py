@@ -20,7 +20,6 @@ from .api import (
     application,
     article,
     signage,
-    websocket,
 )
 from .api.coworking import status, reservation, ambassador, operating_hours
 from .api.academics import section_member, term, course, section, my_courses, hiring
@@ -59,7 +58,6 @@ app = FastAPI(
         profile.openapi_tags,
         user.openapi_tags,
         organizations.openapi_tags,
-        events.openapi_tags,
         section_member.openapi_tags,
         course.openapi_tags,
         room.openapi_tags,
@@ -84,7 +82,6 @@ feature_apis = [
     status,
     reservation,
     operating_hours,
-    events,
     user,
     organizations,
     ambassador,
@@ -106,12 +103,11 @@ feature_apis = [
     admin_facts,
     article,
     signage,
-    websocket,
     study_buddy_router,
 ]
 
 for feature_api in feature_apis:
-    if hasattr(feature_api, 'api'):
+    if hasattr(feature_api, "api"):
         app.include_router(feature_api.api)
     else:
         app.include_router(feature_api)
@@ -120,7 +116,7 @@ for feature_api in feature_apis:
 app.mount("/", static_files.StaticFileMiddleware(directory=Path("./static")))
 
 # Register WebSocket middleware
-app.mount("/", websocket.WebSocketMiddleware)
+# app.add_middleware(websocket.WebSocketMiddleware)
 
 app.include_router(study_buddy_router)
 
@@ -160,14 +156,20 @@ def recurring_office_hour_event_exception(
     return JSONResponse(status_code=500, content={"message": str(e)})
 
 
-# Add feature-specific exception handling middleware
-from .api import events
+@app.exception_handler(Exception)
+async def general_exception_handler(request: Request, exc: Exception):
+    import logging
+    import traceback
 
-feature_exception_handlers = [events.exception_handlers]
+    # Log the full error with traceback
+    logging.error(f"Unhandled exception: {str(exc)}")
+    logging.error(traceback.format_exc())
 
-for feature_exception_handler in feature_exception_handlers:
-    for exception, handler in feature_exception_handler:
-
-        @app.exception_handler(exception)
-        def _handler_wrapper(request: Request, e: Exception):
-            return handler(request, e)
+    return JSONResponse(
+        status_code=500,
+        content={
+            "message": "An unexpected error occurred",
+            "error": str(exc),
+            "type": type(exc).__name__,
+        },
+    )
