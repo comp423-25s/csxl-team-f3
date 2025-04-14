@@ -107,10 +107,14 @@ feature_apis = [
     article,
     signage,
     websocket,
+    study_buddy_router,
 ]
 
 for feature_api in feature_apis:
-    app.include_router(feature_api.api)
+    if hasattr(feature_api, 'api'):
+        app.include_router(feature_api.api)
+    else:
+        app.include_router(feature_api)
 
 # Static file mount used for serving Angular front-end in production, as well as static assets
 app.mount("/", static_files.StaticFileMiddleware(directory=Path("./static")))
