@@ -13,7 +13,7 @@ from ...models.study_buddy.study_buddy_models import (
 class StudyBuddyService:
     def __init__(self):
         # Get API key from environment variable
-        api_key = os.getenv("OPENAI_API_KEY")
+        api_key = os.getenv("UNC_OPENAI_API_KEY")
         if not api_key:
             raise ValueError("OPENAI_API_KEY environment variable is not set")
         self.client = openai.OpenAI(api_key=api_key)
