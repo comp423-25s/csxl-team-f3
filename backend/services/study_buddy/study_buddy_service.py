@@ -12,35 +12,35 @@ from pydantic import BaseModel, RootModel
 from fastapi import Depends
 
 from ..openai import OpenAIService
- 
- 
- # 1) Pydantic 2.x Root Models:
- 
- 
+
+
+# 1) Pydantic 2.x Root Models:
+
+
 class PracticeProblemResponse(BaseModel):
-     """Represents a single problem from the AI response."""
- 
-     question_text: str
-     answer: str
-     explanation: str
- 
- 
+    """Represents a single problem from the AI response."""
+
+    question_text: str
+    answer: str
+    explanation: str
+
+
 class PracticeProblemListResponse(BaseModel):
-     """Represents a response containing a list of practice problems."""
- 
-     problems: List[PracticeProblemResponse]
- 
- 
+    """Represents a response containing a list of practice problems."""
+
+    problems: List[PracticeProblemResponse]
+
+
 class StudyGuideResponse(BaseModel):
-     """Represents a study guide from the AI (could be raw markdown or structured JSON)."""
- 
-     content: str
+    """Represents a study guide from the AI (could be raw markdown or structured JSON)."""
+
+    content: str
 
 
 class StudyBuddyService:
     def __init__(self, openai: OpenAIService = Depends()):
         self.openai = openai
- 
+
     async def generate_practice_problems(
         self,
         course_id: str,
@@ -83,38 +83,38 @@ class StudyBuddyService:
  
              return problems
          """
- 
+
         system_prompt = (
-             "You are an expert computer science educator. "
-             "Generate high-quality practice problems that test conceptual understanding "
-             "and practical skills."
-         )
- 
+            "You are an expert computer science educator. "
+            "Generate high-quality practice problems that test conceptual understanding "
+            "and practical skills."
+        )
+
         try:
-             response: PracticeProblemListResponse = self.openai.prompt(
-                 system_prompt=system_prompt,
-                 user_prompt=user_prompt,
-                 response_model=PracticeProblemListResponse,
-             )
+            response: PracticeProblemListResponse = self.openai.prompt(
+                system_prompt=system_prompt,
+                user_prompt=user_prompt,
+                response_model=PracticeProblemListResponse,
+            )
         except Exception as e:
-             raise Exception(f"Failed to generate practice problems: {str(e)}")
- 
-         # Convert AI response to your domain model
+            raise Exception(f"Failed to generate practice problems: {str(e)}")
+
+        # Convert AI response to your domain model
         problems = []
         for problem_data in response.problems:
-             problems.append(
-                 PracticeProblem(
-                     course_id=UUID(course_id),
-                     topic=topic or "General",
-                     difficulty=difficulty or "medium",
-                     question_type=question_type or "multiple_choice",
-                     question_text=problem_data.question_text,
-                     answer=problem_data.answer,
-                     explanation=problem_data.explanation,
-                 )
-             )
+            problems.append(
+                PracticeProblem(
+                    course_id=UUID(course_id),
+                    topic=topic or "General",
+                    difficulty=difficulty or "medium",
+                    question_type=question_type or "multiple_choice",
+                    question_text=problem_data.question_text,
+                    answer=problem_data.answer,
+                    explanation=problem_data.explanation,
+                )
+            )
         return problems
-    
+
     async def generate_study_guide(
         self,
         course_id: str,
@@ -134,7 +134,7 @@ class StudyBuddyService:
             for progress in student_progress
             if progress.proficiency_score < 0.7
         ]
-        
+
         # Construct a prompt that requests a study guide
         user_prompt = f"""
         Create a comprehensive study guide for the following computer science course:
@@ -158,10 +158,8 @@ class StudyBuddyService:
         """
 
         # Provide a system prompt to set the role for the AI
-        system_prompt = (
-            "You are an expert computer science tutor. Create a detailed and well-structured study guide to help students master complex topics."
-        )
-        
+        system_prompt = "You are an expert computer science tutor. Create a detailed and well-structured study guide to help students master complex topics."
+
         try:
             # Call the OpenAI service helper with our prompts, expecting a StudyGuideResponse
             study_guide_resp: StudyGuideResponse = self.openai.prompt(
@@ -171,15 +169,13 @@ class StudyBuddyService:
             )
         except Exception as e:
             raise Exception(f"Failed to generate study guide: {str(e)}")
-        
+
         # Build and return the StudyGuide object from the response.
         return StudyGuide(
             course_id=UUID(course_id),
             topic=", ".join(topics),
             content=study_guide_resp.content,
         )
-
-
 
     def calculate_proficiency_score(
         self, problems_attempted: int, problems_correct: int
