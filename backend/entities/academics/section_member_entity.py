@@ -73,7 +73,7 @@ class SectionMemberEntity(EntityBase):
 
     # Tickets that have been created by the user
     created_oh_tickets: Mapped[list["OfficeHoursTicketEntity"]] = relationship(
-        secondary=user_created_tickets_table
+        secondary=user_created_tickets_table, overlaps="creators"
     )
 
     # Tickets that have been called by the user
