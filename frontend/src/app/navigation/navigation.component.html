@@ -52,6 +52,13 @@
                 <div matListItemTitle>XL Ambassador</div>
               </mat-list-item>
             }
+            @if (ambassadorPermission$ | async) {
+              <mat-list-item routerLink="/admin/instructor-summary"
+               [activated]="router.isActive('/admin/instructor-summary', false)">
+               <mat-icon matListItemIcon>bar_chart</mat-icon>
+               <div matListItemTitle>Instructor Summary</div>
+             </mat-list-item>
+            }
             @if ((adminPermission$ | async) || (ambassadorPermission$ | async)) {
               <mat-divider></mat-divider>
             }

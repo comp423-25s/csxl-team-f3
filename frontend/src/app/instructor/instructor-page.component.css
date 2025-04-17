@@ -1,0 +1,7 @@
+/* src/app/instructor/instructor-page.component.css */
+.instructor-container { display: flex; gap: 1rem; }
+.course-list { width: 30%; border-right: 1px solid #ddd; padding: 1rem; }
+.course-list ul { list-style: none; padding: 0; }
+.course-list li { padding: 0.5rem; cursor: pointer; }
+.course-list li.selected { background-color: #ccc; }
+.detail { width: 70%; padding: 1rem; }

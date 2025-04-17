@@ -186,3 +186,24 @@ class StudyBuddyService:
         if problems_attempted == 0:
             return 0.0
         return problems_correct / problems_attempted
+    
+    async def generate_instructor_report(
+        self,
+        struggles: Dict[str, int]
+    ) -> str:
+        system_prompt = (
+            "You are an experienced CS instructor. "
+            "Summarize key struggle topics and give teaching suggestions."
+        )
+        user_prompt = f"""
+        Student struggles:
+        {json.dumps(struggles)}
+
+        Please highlight the most challenging topics and suggest how to teach them.
+        """
+        response: StudyGuideResponse = self.openai.prompt(
+            system_prompt=system_prompt,
+            user_prompt=user_prompt,
+            response_model=StudyGuideResponse,
+        )
+        return response.content
