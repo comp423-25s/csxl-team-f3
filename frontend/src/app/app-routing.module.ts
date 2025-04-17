@@ -92,6 +92,12 @@ const routes: Routes = [
     title: 'Study Buddy',
     loadChildren: () =>
       import('./study-buddy/study-buddy.module').then((m) => m.StudyBuddyModule)
+  },
+  {
+    path: 'admin/instructor-summary',
+    title: 'Instructor Summary',
+    loadChildren: () =>
+      import('./instructor/instructor.module').then((m) => m.InstructorModule)
   }
 ];
 

@@ -31,4 +31,17 @@ export class StudyBuddyService {
       topics
     });
   }
+
+  getInstructorStruggles(courseId: string) {
+    return this.http.get<{ struggles: { [topic: string]: number } }>(
+      `/api/study-buddy/instructor/data/${courseId}`
+    );
+  }
+
+  generateInstructorReport(courseId: string) {
+    return this.http.post<{ report: string }>(
+      '/api/study-buddy/instructor/report',
+      { course_id: courseId }
+    );
+  }
 }

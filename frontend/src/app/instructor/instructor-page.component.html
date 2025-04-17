@@ -1,0 +1,32 @@
+<div class="instructor-container">
+  <div class="course-list">
+    <h3>Select Course</h3>
+    <ul>
+      @for (course of courses; track course.id) {
+        <li 
+          (click)="selectCourse(course)"
+          [class.selected]="course === selectedCourse">
+          {{ course.name }}
+        </li>
+      } @empty {
+        <li>No courses available</li>
+      }
+    </ul>
+  </div>
+
+  @if (selectedCourse) {
+    <div class="detail">
+      <h2>{{ selectedCourse.name }}</h2>
+
+      <button mat-raised-button color="accent"
+              (click)="generateReport()">
+        Generate Summary Report
+      </button>
+
+      @if (report) {
+        <h3>Instructor Report</h3>
+        <p>{{ report }}</p>
+      }
+    </div>
+  }
+</div>
