@@ -1,41 +1,154 @@
 .study-buddy-container {
-    display: flex;
-    flex-direction: row;
-    gap: 1rem;
-  }
-  
-  .course-list {
-    width: 30%;
-    border-right: 1px solid #ddd;
-    padding: 1rem;
-  }
-  
-  .course-list ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  .course-list li {
-    padding: 0.5rem;
-    cursor: pointer;
-  }
-  
-  .course-list li.selected {
-    background-color: #ccc;
-  }
-  
-  .course-detail {
-    width: 70%;
-    padding: 1rem;
-  }
-  
-  .topic-section {
-    margin-bottom: 1rem;
-  }
-  
-  .chat-messages {
-    border-top: 1px solid #ddd;
-    margin-top: 1rem;
-    padding-top: 1rem;
-  }
+  display: flex;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+  background-color: #FEF7FF; /* surface color from theme */
+}
+
+.course-list {
+  width: 300px;
+  background-color: #f5f5f5;
+  padding: 20px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+}
+
+.course-list h3 {
+  margin-top: 0;
+  color: #333;
+}
+
+.course-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.course-list li {
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #313030; /* Making sure text has contrast against background */
+}
+
+.course-list li:hover {
+  background-color: #e0e0e0;
+}
+
+.course-list li.selected {
+  background-color: #e0f7fa;
+  color: #006064;
+  font-weight: 500;
+}
+
+.course-detail {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  color: #313030; /* Ensuring text has good contrast */
+}
+
+.course-detail h2 {
+  color: #333;
+  margin-top: 0;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  color: #484646; /* Using neutral-30 color from theme */
+}
+
+.generator-controls {
+  margin: 20px 0;
+  padding: 15px;
+  background-color: #F3EDF7; /* surface-container-high from theme */
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+
+.generator-controls h3 {
+  color: #381e72; /* primary-20 for heading */
+  margin-top: 0;
+}
+
+.form-controls {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 15px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.form-group label {
+  margin-bottom: 5px;
+  font-weight: 500;
+  color: #4A2532; /* tertiary-20 from theme */
+}
+
+.form-group select {
+  padding: 8px;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  color: #313030; /* neutral-20 from theme */
+  background-color: #FFFFFF;
+}
+
+.button-group {
+  display: flex;
+  gap: 10px;
+}
+
+.chat-messages {
+  margin-top: 20px;
+}
+
+.user-message,
+.bot-message {
+  padding: 10px 15px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+  max-width: 80%;
+}
+
+.user-message {
+  background-color: #e3f2fd;
+  align-self: flex-end;
+  margin-left: auto;
+  color: #1C1B1C; /* Ensuring text has good contrast */
+}
+
+.bot-message {
+  background-color: #f5f5f5;
+  align-self: flex-start;
+  color: #1C1B1C; /* Ensuring text has good contrast */
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+.content-pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+  margin: 0;
+  overflow-x: auto;
+  max-width: 100%;
+  color: #313030; /* Ensuring text has good contrast */
+}
   

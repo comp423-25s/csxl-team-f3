@@ -1,12 +1,15 @@
 <div class="instructor-container">
   <div class="course-list">
     <h3>Select Course</h3>
+    @if (loading && courses.length === 0) {
+      <p>Loading courses...</p>
+    }
     <ul>
       @for (course of courses; track course.id) {
         <li 
           (click)="selectCourse(course)"
           [class.selected]="course === selectedCourse">
-          {{ course.name }}
+          {{ course.subject_code }} {{ course.number }} - {{ course.title }}
         </li>
       } @empty {
         <li>No courses available</li>
@@ -16,17 +19,30 @@
 
   @if (selectedCourse) {
     <div class="detail">
-      <h2>{{ selectedCourse.name }}</h2>
+      <h2>{{ selectedCourse.subject_code }} {{ selectedCourse.number }} - {{ selectedCourse.title }}</h2>
+      <p>{{ selectedCourse.description }}</p>
 
       <button mat-raised-button color="accent"
-              (click)="generateReport()">
-        Generate Summary Report
+              (click)="generateReport()"
+              [disabled]="loading">
+        Generate Instructor Report
       </button>
+
+      @if (loading && !report) {
+        <div class="loading">Generating report... Please wait.</div>
+      }
 
       @if (report) {
         <h3>Instructor Report</h3>
-        <p>{{ report }}</p>
+        <div class="report-content">
+          <pre class="content-pre">{{ report }}</pre>
+        </div>
       }
+    </div>
+  } @else {
+    <div class="detail empty-state">
+      <h2>Instructor Summary</h2>
+      <p>Select a course from the list to generate an instructor report.</p>
     </div>
   }
 </div>

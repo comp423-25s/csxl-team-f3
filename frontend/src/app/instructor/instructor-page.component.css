@@ -1,7 +1,101 @@
 /* src/app/instructor/instructor-page.component.css */
-.instructor-container { display: flex; gap: 1rem; }
-.course-list { width: 30%; border-right: 1px solid #ddd; padding: 1rem; }
-.course-list ul { list-style: none; padding: 0; }
-.course-list li { padding: 0.5rem; cursor: pointer; }
-.course-list li.selected { background-color: #ccc; }
-.detail { width: 70%; padding: 1rem; }
+.instructor-container {
+  display: flex;
+  height: calc(100vh - 64px);
+  overflow: hidden;
+  background-color: #FEF7FF; /* surface color from theme */
+}
+
+.course-list {
+  width: 300px;
+  background-color: #f5f5f5;
+  padding: 20px;
+  overflow-y: auto;
+  border-right: 1px solid #ddd;
+}
+
+.course-list h3 {
+  margin-top: 0;
+  color: #381e72; /* primary-20 from theme */
+}
+
+.course-list ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.course-list li {
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 5px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  color: #313030; /* neutral-20 from theme */
+}
+
+.course-list li:hover {
+  background-color: #e0e0e0;
+}
+
+.course-list li.selected {
+  background-color: #e0f7fa;
+  color: #006064;
+  font-weight: 500;
+}
+
+.detail {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  color: #313030; /* Ensuring text has good contrast */
+}
+
+.detail h2 {
+  color: #381e72; /* primary-20 from theme */
+  margin-top: 0;
+}
+
+.detail h3 {
+  color: #4A2532; /* tertiary-20 from theme */
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  text-align: center;
+  color: #484646; /* neutral-30 from theme */
+}
+
+button {
+  margin: 20px 0;
+}
+
+.loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  color: #666;
+  font-style: italic;
+}
+
+.report-content {
+  margin-top: 15px;
+  padding: 15px;
+  background-color: #F3EDF7; /* surface-container-high from theme */
+  border-radius: 4px;
+  border: 1px solid #eee;
+}
+
+.content-pre {
+  white-space: pre-wrap;
+  font-family: inherit;
+  margin: 0;
+  overflow-x: auto;
+  max-width: 100%;
+  color: #313030; /* Ensuring text has good contrast */
+}

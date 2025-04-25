@@ -2,10 +2,15 @@
   <!-- Left Panel: Courses List -->
   <div class="course-list">
     <h3>Select a Course</h3>
+    @if (loading && courses.length === 0) {
+      <p>Loading courses...</p>
+    }
     <ul>
       @for (course of courses; track course.id) {
-        <li (click)="selectCourse(course)">
-          {{ course.name }}
+        <li 
+          (click)="selectCourse(course)" 
+          [class.selected]="selectedCourse?.id === course.id">
+          {{ course.subject_code }} {{ course.number }} - {{ course.title }}
         </li>
       } @empty {
         <li>No courses available</li>
@@ -16,34 +21,68 @@
   <!-- Right Panel: Course Details and Actions -->
   @if (selectedCourse) {
     <div class="course-detail">
-      <h2>{{ selectedCourse.name }}</h2>
+      <h2>{{ selectedCourse.subject_code }} {{ selectedCourse.number }} - {{ selectedCourse.title }}</h2>
       <p>{{ selectedCourse.description }}</p>
 
-      <h3>Topics</h3>
-      @for (topic of selectedCourse.topics; track topic) {
-        <div class="topic-section">
-          <p>{{ topic }}</p>
-          <button mat-raised-button color="primary" (click)="generatePracticeProblems(selectedCourse.id)">
-            Generate Practice Problem
-          </button>
-          <button mat-raised-button color="accent" (click)="generateStudyGuide(selectedCourse.id)">
-            Generate Study Guide
-          </button>
-        </div>
-      } @empty {
-        <p>No topics available</p>
-      }
+      <div class="generator-controls">
+        <h3>Generate Study Materials</h3>
+        <form [formGroup]="problemForm">
+          <div class="form-controls">
+            <div class="form-group">
+              <label for="difficulty">Difficulty</label>
+              <select id="difficulty" formControlName="difficulty">
+                <option value="easy">Easy</option>
+                <option value="medium">Medium</option>
+                <option value="hard">Hard</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="question_type">Question Type</label>
+              <select id="question_type" formControlName="question_type">
+                <option value="multiple_choice">Multiple Choice</option>
+                <option value="free_response">Free Response</option>
+                <option value="coding">Coding</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="button-group">
+            <button 
+              mat-raised-button 
+              color="primary" 
+              (click)="generatePracticeProblems()" 
+              [disabled]="loading">
+              Generate Practice Problems
+            </button>
+            <button 
+              mat-raised-button 
+              color="accent" 
+              (click)="generateStudyGuide()" 
+              [disabled]="loading">
+              Generate Study Guide
+            </button>
+          </div>
+        </form>
+      </div>
 
       <h3>Output</h3>
+      @if (loading) {
+        <div class="loading">Generating content... Please wait.</div>
+      }
       <div class="chat-messages">
         @for (msg of chatMessages; track msg.message) {
           <div [ngClass]="{'user-message': msg.sender === 'user', 'bot-message': msg.sender === 'bot'}">
-            {{ msg.message }}
+            <pre class="content-pre">{{ msg.message }}</pre>
           </div>
         } @empty {
-          <p>No messages available</p>
+          <p>Select an option above to generate content</p>
         }
       </div>
+    </div>
+  } @else {
+    <div class="course-detail empty-state">
+      <h2>Study Buddy</h2>
+      <p>Select a course from the list to generate study materials.</p>
     </div>
   }
 </div>

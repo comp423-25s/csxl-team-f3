@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
-import { StudyBuddyService } from 'src/app/study-buddy.service';
+import {
+  StudyBuddyService,
+  InstructorReportResponse
+} from 'src/app/study-buddy.service';
 import { Course } from 'src/app/models/course.model';
 
 @Component({
@@ -11,13 +14,25 @@ export class InstructorPageComponent implements OnInit {
   courses: Course[] = [];
   selectedCourse: Course | null = null;
   report: string = '';
+  loading = false;
 
   constructor(private studyBuddyService: StudyBuddyService) {}
 
   ngOnInit(): void {
+    this.loadCourses();
+  }
+
+  loadCourses(): void {
+    this.loading = true;
     this.studyBuddyService.getCourses().subscribe({
-      next: (data) => (this.courses = data),
-      error: (err) => console.error('Error loading courses', err)
+      next: (data) => {
+        this.courses = data;
+        this.loading = false;
+      },
+      error: (err: any) => {
+        console.error('Error loading courses', err);
+        this.loading = false;
+      }
     });
   }
 
@@ -28,11 +43,19 @@ export class InstructorPageComponent implements OnInit {
 
   generateReport(): void {
     if (!this.selectedCourse) return;
+
+    this.loading = true;
     this.studyBuddyService
-      .generateInstructorReport(this.selectedCourse.id)
+      .getInstructorReport(this.selectedCourse.id)
       .subscribe({
-        next: (data) => (this.report = data.report),
-        error: (err) => console.error('Error generating report', err)
+        next: (data: InstructorReportResponse) => {
+          this.report = data.report;
+          this.loading = false;
+        },
+        error: (err: any) => {
+          console.error('Error generating report', err);
+          this.loading = false;
+        }
       });
   }
 }
