@@ -1,9 +1,8 @@
 export interface Course {
-    id: string; // Use string to represent UUID (typically an ISO string)
-    name: string;
-    description: string;
-    topics: string[];
-    created_at: string;
-    updated_at: string;
-  }
-  
+  id: string;
+  subject_code: string;
+  number: string;
+  title: string;
+  description: string;
+  credit_hours: number;
+}

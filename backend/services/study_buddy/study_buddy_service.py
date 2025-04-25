@@ -1,14 +1,12 @@
-from typing import List, Optional, Dict, Any
+from typing import List, Optional, Dict
 from uuid import UUID
-import openai
-import os
 import json
 from ...models.study_buddy.study_buddy_models import (
     PracticeProblem,
     StudyGuide,
-    StudentProgress,
 )
-from pydantic import BaseModel, RootModel
+from ...services.academics import CourseService
+from pydantic import BaseModel
 from fastapi import Depends
 
 from ..openai import OpenAIService
@@ -38,14 +36,17 @@ class StudyGuideResponse(BaseModel):
 
 
 class StudyBuddyService:
-    def __init__(self, openai: OpenAIService = Depends()):
+    def __init__(
+        self,
+        openai: OpenAIService = Depends(),
+        course_service: CourseService = Depends(),
+    ):
         self.openai = openai
+        self.course_service = course_service
 
     async def generate_practice_problems(
         self,
         course_id: str,
-        course_description: str,
-        topic: Optional[str] = None,
         difficulty: Optional[str] = None,
         question_type: Optional[str] = None,
         num_problems: int = 5,
@@ -53,11 +54,14 @@ class StudyBuddyService:
         """
         Generate practice problems using OpenAI
         """
+        # Get course details
+        course = self.course_service.get_by_id(course_id)
+        course_description = course.description
+
         user_prompt = f"""
         Create {num_problems} practice problems for the following course:
         Course: {course_id} - {course_description}
         
-        Topic: {topic if topic else 'Any relevant topic'}
         Difficulty: {difficulty if difficulty else 'Any difficulty'}
         Question Type: {question_type if question_type else 'Any type'}
         
@@ -68,21 +72,17 @@ class StudyBuddyService:
         4. Be appropriate for a computer science student
         5. Include relevant code examples if applicable
         
-
         Return a JSON object with this format:
-
         {{
-             "problems": [
-                 {{
-                 "question_text": "The question text",
-                 "answer": "The correct answer",
-                 "explanation": "Why it's correct"
-                 }}
-             ]
-             }}
- 
-             return problems
-         """
+            "problems": [
+                {{
+                "question_text": "The question text",
+                "answer": "The correct answer",
+                "explanation": "Why it's correct"
+                }}
+            ]
+        }}
+        """
 
         system_prompt = (
             "You are an expert computer science educator. "
@@ -104,10 +104,9 @@ class StudyBuddyService:
         for problem_data in response.problems:
             problems.append(
                 PracticeProblem(
-                    course_id=UUID(course_id),
-                    topic=topic or "General",
-                    difficulty=difficulty or "medium",
-                    question_type=question_type or "multiple_choice",
+                    course_id=course_id,
+                    difficulty=difficulty,
+                    question_type=question_type,
                     question_text=problem_data.question_text,
                     answer=problem_data.answer,
                     explanation=problem_data.explanation,
@@ -118,31 +117,19 @@ class StudyBuddyService:
     async def generate_study_guide(
         self,
         course_id: str,
-        course_description: str,
-        topics: List[str],
-        student_progress: List[StudentProgress],
     ) -> StudyGuide:
         """
-        Generate a personalized study guide using OpenAIService.
-        This method constructs a prompt using the course info and topics,
-        calls the OpenAI API to generate a study guide in JSON format, and
-        returns a StudyGuide instance.
+        Generate a study guide using OpenAIService.
+        This method constructs a prompt using the course description.
         """
-        # Identify weak topics from student progress (where proficiency is low)
-        weak_topics = [
-            progress.topic
-            for progress in student_progress
-            if progress.proficiency_score < 0.7
-        ]
+        # Get course details
+        course = self.course_service.get_by_id(course_id)
+        course_description = course.description
 
         # Construct a prompt that requests a study guide
         user_prompt = f"""
         Create a comprehensive study guide for the following computer science course:
         Course: {course_id} - {course_description}
-        
-        Topics to cover: {', '.join(topics)}
-        
-        Focus especially on these areas where the student needs improvement: {', '.join(weak_topics) if weak_topics else 'None'}
         
         The study guide should:
         1. Explain key concepts clearly and concisely.
@@ -172,34 +159,31 @@ class StudyBuddyService:
 
         # Build and return the StudyGuide object from the response.
         return StudyGuide(
-            course_id=UUID(course_id),
-            topic=", ".join(topics),
+            course_id=course_id,
             content=study_guide_resp.content,
         )
 
-    def calculate_proficiency_score(
-        self, problems_attempted: int, problems_correct: int
-    ) -> float:
+    async def generate_instructor_report(self, course_id: str) -> str:
         """
-        Calculate a proficiency score based on problem-solving performance
+        Generate an instructor report for a course
         """
-        if problems_attempted == 0:
-            return 0.0
-        return problems_correct / problems_attempted
-    
-    async def generate_instructor_report(
-        self,
-        struggles: Dict[str, int]
-    ) -> str:
+        # Get course details
+        course = self.course_service.get_by_id(course_id)
+        course_description = course.description
+
         system_prompt = (
             "You are an experienced CS instructor. "
-            "Summarize key struggle topics and give teaching suggestions."
+            "Create a helpful teaching guide for this course."
         )
         user_prompt = f"""
-        Student struggles:
-        {json.dumps(struggles)}
-
-        Please highlight the most challenging topics and suggest how to teach them.
+        Create a teaching guide for the following course:
+        Course: {course_id} - {course_description}
+        
+        The guide should focus on:
+        1. Key concepts that students typically find challenging
+        2. Recommended teaching approaches
+        3. Suggested activities and exercises
+        4. Common misconceptions and how to address them
         """
         response: StudyGuideResponse = self.openai.prompt(
             system_prompt=system_prompt,

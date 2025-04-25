@@ -37,11 +37,7 @@ from .academics.hiring.hiring_level_entity import HiringLevelEntity
 
 # Study Buddy Entities
 from .study_buddy.study_buddy_entity import (
-    Course,
     PracticeProblem,
-    StudySession,
-    StudySessionProblem,
-    StudentProgress,
     StudyGuide,
     AIAuditLog,
 )
