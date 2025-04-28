@@ -72,7 +72,7 @@
       <div class="chat-messages">
         @for (msg of chatMessages; track msg.message) {
           <div [ngClass]="{'user-message': msg.sender === 'user', 'bot-message': msg.sender === 'bot'}">
-            <pre class="content-pre">{{ msg.message }}</pre>
+            <markdown [data]="msg.message"></markdown>
           </div>
         } @empty {
           <p>Select an option above to generate content</p>

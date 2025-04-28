@@ -35,6 +35,7 @@ import { MatStepperModule } from '@angular/material/stepper';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MarkdownModule, MARKED_OPTIONS } from 'ngx-markdown';
 
 /* Application Specific */
 import { AppRoutingModule } from './app-routing.module';
@@ -56,7 +57,7 @@ import { MatChipsModule } from '@angular/material/chips';
     ErrorDialogComponent,
     HomeComponent,
     AboutComponent,
-    GateComponent,
+    GateComponent
   ],
   bootstrap: [AppComponent],
   imports: [
@@ -89,14 +90,26 @@ import { MatChipsModule } from '@angular/material/chips';
     FormsModule,
     RouterModule,
     SharedModule,
-    JwtModule.forRoot({
-        config: {
-            tokenGetter: () => {
-                return localStorage.getItem('bearerToken');
-            }
+    MarkdownModule.forRoot({
+      markedOptions: {
+        provide: MARKED_OPTIONS,
+        useValue: {
+          gfm: true,
+          breaks: true,
+          pedantic: false,
+          smartLists: true,
+          smartypants: false
         }
+      }
+    }),
+    JwtModule.forRoot({
+      config: {
+        tokenGetter: () => {
+          return localStorage.getItem('bearerToken');
+        }
+      }
     })
-],
+  ],
   providers: [
     {
       provide: HTTP_INTERCEPTORS,

@@ -71,13 +71,15 @@ class StudyBuddyService:
         3. Include a detailed explanation of the correct answer
         4. Be appropriate for a computer science student
         5. Include relevant code examples if applicable
+        6. If the question is listed as multiple choice, provide the correct answer and the incorrect answers.
+        
         
         Return a JSON object with this format:
         {{
             "problems": [
                 {{
                 "question_text": "The question text",
-                "answer": "The correct answer",
+                "answer": "The correct answer (if multiple choice, provide the correct answer and the incorrect answers, clearly indicated as such)",
                 "explanation": "Why it's correct"
                 }}
             ]
