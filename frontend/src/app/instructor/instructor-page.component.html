@@ -35,7 +35,7 @@
       @if (report) {
         <h3>Instructor Report</h3>
         <div class="report-content">
-          <pre class="content-pre">{{ report }}</pre>
+          <markdown [data] = "report"></markdown>
         </div>
       }
     </div>
