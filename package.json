@@ -1,6 +1,11 @@
 {
   "dependencies": {
+    "@angular/animations": "^19.2.9",
+    "@angular/cdk": "^19.2.14",
+    "@angular/material": "^19.2.14",
     "marked": "^15.0.11",
+    "marked-smartypants": "1.1.9",
+    "ngx-markdown": "^19.1.1",
     "openmeteo": "^1.2.0"
   },
   "devDependencies": {
