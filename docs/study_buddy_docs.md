@@ -2,9 +2,9 @@
 
 ## Authors
 
-Daniel Wang: Github - https://github.com/danielwang23
-Chris Zou: Github - https://github.com/chzou123
-Shanyu Gowdu: Github - https://github.com/gowdu0
+- Daniel Wang: Github - https://github.com/danielwang23
+- Chris Zou: Github - https://github.com/chzou123
+- Shanyu Gowdu: Github - https://github.com/gowdu0
 
 ## Frontend
 
@@ -78,16 +78,16 @@ The panel on the left is automatically populated with every course pulled from t
 catalog; selecting COMP 110 – Introduction to Programming and Data Science highlights the
 course and shows its description at the top of the workspace.
 
-![Study Buddy home screen](docs/images/study-buddy-nav.png)
+![Study Buddy home screen](images/study-buddy-nav.png)
 
 After choosing a course, the student can adjust the study parameters by setting the desired
 difficulty and question type. Pressing Generate Practice Problems sends those options to the backend, and the UI
 displays a list of well‑formatted problems, each one with the correct answer and an explanation.
 
-![Study Buddy Report](docs/images/study-questions.png)
+![Study Buddy Report](images/study-questions.png)
 
 For instructor users, they can click on the **Instructor Summary** widget underneath Administration → Instructor Summary. Here an instructor selects the same dynamic course list as students see and can click Generate Instructor Report to request teaching guidance for students in the class.
 
-![Study Buddy Report](docs/images/instructor-summary-nav.png)
+![Study Buddy Report](images/instructor-summary-nav.png)
 
-![Study Buddy Report](docs/images/instructor-report.png)
+![Study Buddy Report](images/instructor-report.png)
