@@ -2,6 +2,7 @@
 
 ## Authors
 
+
 - Daniel Wang: Github - https://github.com/danielwang23
 - Chris Zou: Github - https://github.com/chzou123
 - Shanyu Gowdu: Github - https://github.com/gowdu0
@@ -78,7 +79,9 @@ The panel on the left is automatically populated with every course pulled from t
 catalog; selecting COMP 110 – Introduction to Programming and Data Science highlights the
 course and shows its description at the top of the workspace.
 
+
 ![Study Buddy home screen](images/study-buddy-nav.png)
+
 
 After choosing a course, the student can adjust the study parameters by setting the desired
 difficulty and question type. Pressing Generate Practice Problems sends those options to the backend, and the UI
